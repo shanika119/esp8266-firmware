@@ -16,7 +16,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 // ---------- OTA ----------
-const char* firmwareURL = "https://github.com/shanika119/esp8266-firmware/blob/main/build/esp8266.esp8266.nodemcuv2/mqttOTA.ino.bin";
+const char* firmwareURL = "https://github.com/shanika119/esp8266-firmware/raw/refs/heads/main/build/esp8266.esp8266.nodemcuv2/mqttOTA.ino.bin";
 
 // ---------- LED ----------
 #define LED_PIN LED_BUILTIN
@@ -59,6 +59,7 @@ void startOTA() {
   secureClient.setInsecure(); // skip cert validation for GitHub raw link
 
   ESPhttpUpdate.rebootOnUpdate(true);
+  ESPhttpUpdate.followRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
 
   t_httpUpdate_return result = ESPhttpUpdate.update(secureClient, firmwareURL);
 
@@ -110,7 +111,7 @@ void loop() {
 
   // Non-blocking 5-second blink
   unsigned long now = millis();
-  if (now - lastBlink >= 1000) {
+  if (now - lastBlink >= 100) {
     lastBlink = now;
     ledState = !ledState;
     digitalWrite(LED_PIN, ledState ? LOW : HIGH); // active LOW
